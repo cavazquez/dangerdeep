@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #if defined WIN32 && defined _MSC_VER
 // one day MS might start supporting standards
-#include <SDL_config_win32.h>
+#include <SDL3/SDL_config_win32.h>
 #else
 #include <stdint.h>
 #endif

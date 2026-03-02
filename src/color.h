@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef COLOR_H
 #define COLOR_H
 
-#include <SDL_types.h>
+#include <SDL3/SDL_stdinc.h>
 
 ///\brief Color representation with some basic transformations and OpenGL usage.
 struct color {

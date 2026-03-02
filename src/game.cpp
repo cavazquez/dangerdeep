@@ -30,7 +30,7 @@ double log2(double n) {
 #endif
 
 #include "oglext/OglExt.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include "system.h"
 #include <algorithm>

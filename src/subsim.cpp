@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 
 #include "oglext/OglExt.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <glu.h>
 
 #include "cfg.h"
@@ -1268,9 +1268,9 @@ void configure_key(widget_list *wkeys) {
                 close(0);
                 return;
             }
-            bool ctrl = (ks.mod & (KMOD_LCTRL | KMOD_RCTRL)) != 0;
-            bool alt = (ks.mod & (KMOD_LALT | KMOD_RALT | KMOD_MODE /* Alt Gr */)) != 0;
-            bool shift = (ks.mod & (KMOD_LSHIFT | KMOD_RSHIFT)) != 0;
+            bool ctrl = (ks.mod & (SDL_KMOD_LCTRL | SDL_KMOD_RCTRL)) != 0;
+            bool alt = (ks.mod & (SDL_KMOD_LALT | SDL_KMOD_RALT | SDL_KMOD_MODE /* Alt Gr */)) != 0;
+            bool shift = (ks.mod & (SDL_KMOD_LSHIFT | SDL_KMOD_RSHIFT)) != 0;
             cfg::instance().set_key(keynr, ks.sym, ctrl, alt, shift);
             keyname->set_text(cfg::instance().getkey(keynr).get_name());
             redraw();
@@ -1983,9 +1983,9 @@ int mymain(list<string> &args) {
             while (!quit) {
                 list<SDL_Event> events = sys().poll_event_queue();
                 for (list<SDL_Event>::iterator it = events.begin(); it != events.end(); ++it) {
-                    if (it->type == SDL_KEYDOWN) {
+                    if (it->type == SDL_EVENT_KEY_DOWN) {
                         quit = true;
-                    } else if (it->type == SDL_MOUSEBUTTONUP) {
+                    } else if (it->type == SDL_EVENT_MOUSE_BUTTON_UP) {
                         quit = true;
                     }
                 }

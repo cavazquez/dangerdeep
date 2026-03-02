@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // (C)+(W) by Thorsten Jordan. See LICENSE
 
 #include "oglext/OglExt.h"
-#include <SDL_image.h>
+#include <SDL3_image/SDL_image.h>
 
 #include "datadirs.h"
 #include "filehelper.h"
@@ -581,15 +581,15 @@ void widget::draw_frame(int x, int y, int w, int h, bool out) {
 void widget::process_input(const SDL_Event &event) {
     vector2i pos;
     switch (event.type) {
-    case SDL_KEYDOWN:
+    case SDL_EVENT_KEY_DOWN:
         if (focussed && focussed->is_enabled())
-            focussed->on_char(event.key.keysym);
+            focussed->on_char(event.key);
         break;
 
-    case SDL_KEYUP: // ignore for now
+    case SDL_EVENT_KEY_UP: // ignore for now
         break;
 
-    case SDL_MOUSEBUTTONDOWN:
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
         pos = sys().translate_position(event);
         if (event.button.button == SDL_BUTTON_LEFT) {
             compute_focus(pos);
@@ -604,14 +604,14 @@ void widget::process_input(const SDL_Event &event) {
             if (focussed)
                 focussed->on_click(pos, SDL_BUTTON_MMASK);
         }
-        // !Rake: Rewrite see case SDL_MOUSEWHEEL:
+        // !Rake: Rewrite see case SDL_EVENT_MOUSE_WHEEL:
         // } else if (event.button.button == SDL_BUTTON_WHEELUP) {
         //	if (focussed) focussed->on_wheel(1);
         // } else if (event.button.button == SDL_BUTTON_WHEELDOWN) {
         //	if (focussed) focussed->on_wheel(2);
         //}
         break;
-    case SDL_MOUSEWHEEL:
+    case SDL_EVENT_MOUSE_WHEEL:
         if (event.wheel.y > 0)
             if (focussed)
                 focussed->on_wheel(1);
@@ -620,14 +620,14 @@ void widget::process_input(const SDL_Event &event) {
                 focussed->on_wheel(2);
         break;
 
-    case SDL_MOUSEBUTTONUP:
+    case SDL_EVENT_MOUSE_BUTTON_UP:
         if (event.button.button == SDL_BUTTON_LEFT) {
             if (focussed)
                 focussed->on_release();
         }
         break;
 
-    case SDL_MOUSEMOTION:
+    case SDL_EVENT_MOUSE_MOTION:
         compute_mouseover(sys().translate_position(event));
         if (focussed)
             focussed->on_drag(sys().translate_position_x(event),
@@ -647,15 +647,15 @@ void widget::process_input(const list<SDL_Event> &events) {
 
 bool widget::check_for_mouse_event(const SDL_Event &event) {
     vector2i pos = sys().translate_position(event);
-    if (event.type == SDL_MOUSEMOTION && is_mouse_over(pos)) {
+    if (event.type == SDL_EVENT_MOUSE_MOTION && is_mouse_over(pos)) {
         process_input(event);
         return true;
     }
-    if (event.type == SDL_MOUSEBUTTONDOWN && is_mouse_over(pos)) {
+    if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && is_mouse_over(pos)) {
         process_input(event);
         return true;
     }
-    if (event.type == SDL_MOUSEBUTTONUP && is_mouse_over(pos)) {
+    if (event.type == SDL_EVENT_MOUSE_BUTTON_UP && is_mouse_over(pos)) {
         process_input(event);
         return true;
     }

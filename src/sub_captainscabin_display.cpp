@@ -99,12 +99,12 @@ void sub_captainscabin_display::process_input(class game &gm, const SDL_Event &e
     //	submarine* sub = dynamic_cast<submarine*>(gm.get_player());
 
     switch (event.type) {
-    case SDL_MOUSEWHEEL:
+    case SDL_EVENT_MOUSE_WHEEL:
         if (event.wheel.y > 0) {
         } else if (event.wheel.y < 0) {
         }
         break;
-    case SDL_MOUSEBUTTONDOWN:
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
         // check if there is a clickable area below the mouse and take some action
         mx = sys().translate_position_x(event);
         my = sys().translate_position_y(event);
@@ -112,7 +112,7 @@ void sub_captainscabin_display::process_input(class game &gm, const SDL_Event &e
             // fixme:
         }
         break;
-    case SDL_MOUSEBUTTONUP:
+    case SDL_EVENT_MOUSE_BUTTON_UP:
         // check if there is a clickable area below the mouse and take some action
         mx = sys().translate_position_x(event);
         my = sys().translate_position_y(event);
@@ -126,7 +126,7 @@ void sub_captainscabin_display::process_input(class game &gm, const SDL_Event &e
             }
         }
         break;
-    case SDL_MOUSEMOTION:
+    case SDL_EVENT_MOUSE_MOTION:
         mx = sys().translate_position_x(event);
         my = sys().translate_position_y(event);
         break;

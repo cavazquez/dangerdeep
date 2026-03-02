@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MUSIC_H_
 #define _MUSIC_H_
 
-#include <SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 #include <map>
 #include <string>
 #include <vector>

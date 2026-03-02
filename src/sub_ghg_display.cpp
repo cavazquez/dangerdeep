@@ -59,7 +59,7 @@ void sub_ghg_display::process_input(class game &gm, const SDL_Event &event) {
     const scheme &s = *myscheme;
 
     switch (event.type) {
-    case SDL_MOUSEBUTTONDOWN:
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
         mx = sys().translate_position_x(event);
         my = sys().translate_position_y(event);
         // check if mouse is over turn knobs
@@ -70,7 +70,7 @@ void sub_ghg_display::process_input(class game &gm, const SDL_Event &event) {
             turnknobdrag = TK_VOLUME;
         }
         break;
-    case SDL_MOUSEMOTION:
+    case SDL_EVENT_MOUSE_MOTION:
         mx = sys().translate_motion_x(event);
         my = sys().translate_motion_y(event);
         mb = event.motion.state;
@@ -94,7 +94,7 @@ void sub_ghg_display::process_input(class game &gm, const SDL_Event &event) {
             }
         }
         break;
-    case SDL_MOUSEBUTTONUP:
+    case SDL_EVENT_MOUSE_BUTTON_UP:
         mx = sys().translate_position_x(event);
         my = sys().translate_position_y(event);
         turnknobdrag = TK_NONE;

@@ -26,7 +26,7 @@
 #include "system.h"
 #include "time.h"
 #include "vector2.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <fstream>
 #include <string>
 

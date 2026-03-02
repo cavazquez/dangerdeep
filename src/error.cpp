@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // (C)+(W) by Thorsten Jordan. See LICENSE
 
 #include "error.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <sstream>
 
 #if defined(DEBUG) && defined(__GNUC__)

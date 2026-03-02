@@ -92,7 +92,7 @@ void sub_gauges_display::process_input(class game &gm, const SDL_Event &event) {
     submarine *sub = dynamic_cast<submarine *>(gm.get_player());
     int mx, my;
     switch (event.type) {
-    case SDL_MOUSEBUTTONDOWN:
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
         mx = sys().translate_position_x(event);
         my = sys().translate_position_y(event);
         // if mouse is over control c, compute angle a, set matching command, fixme

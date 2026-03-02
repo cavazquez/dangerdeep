@@ -69,30 +69,30 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 #------------------------------------
 
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
-message(STATUS "SDL2_INCLUDE_DIR:       ${SDL2_INCLUDE_DIR}")
-message(STATUS "SDL2_LIBRARY:           ${SDL2_LIBRARY}")
-if(DEFINED SDL2_VERSION)
-	message(STATUS "SDL2_VERSION:           ${SDL2_VERSION}")
+find_package(SDL3 3.4.0 REQUIRED)
+include_directories(${SDL3_INCLUDE_DIRS})
+message(STATUS "SDL3_INCLUDE_DIRS:      ${SDL3_INCLUDE_DIRS}")
+message(STATUS "SDL3_LIBRARIES:         ${SDL3_LIBRARIES}")
+if(DEFINED SDL3_VERSION)
+	message(STATUS "SDL3_VERSION:           ${SDL3_VERSION}")
 endif()
 
 #------------------------------------
 
-find_package(SDL2_mixer REQUIRED)
-include_directories(${SDL2_MIXER_INCLUDE_DIRS})
-message(STATUS "SDL2_MIXER_LIBRARY:     ${SDL2_MIXER_LIBRARIES}")
-if(DEFINED SDL2_MIXER_VERSION_STRING)
-	message(STATUS "SDL2_MIXER_VERSION:     ${SDL2_MIXER_VERSION_STRING}")
+find_package(SDL3_mixer REQUIRED)
+include_directories(${SDL3_MIXER_INCLUDE_DIRS})
+message(STATUS "SDL3_MIXER_LIBRARIES:   ${SDL3_MIXER_LIBRARIES}")
+if(DEFINED SDL3_MIXER_VERSION)
+	message(STATUS "SDL3_MIXER_VERSION:     ${SDL3_MIXER_VERSION}")
 endif()
 
 #------------------------------------
 
-find_package(SDL2_image REQUIRED)
-include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
-message(STATUS "SDL2_IMAGE_LIBRARY:     ${SDL2_IMAGE_LIBRARIES}")
-if(DEFINED SDL2_IMAGE_VERSION_STRING)
-	message(STATUS "SDL2_IMAGE_VERSION:     ${SDL2_IMAGE_VERSION_STRING}")
+find_package(SDL3_image REQUIRED)
+include_directories(${SDL3_IMAGE_INCLUDE_DIRS})
+message(STATUS "SDL3_IMAGE_LIBRARIES:   ${SDL3_IMAGE_LIBRARIES}")
+if(DEFINED SDL3_IMAGE_VERSION)
+	message(STATUS "SDL3_IMAGE_VERSION:     ${SDL3_IMAGE_VERSION}")
 endif()
 
 #------------------------------------
@@ -174,9 +174,9 @@ include_directories("${CMAKE_BINARY_DIR}")
 
 set(LIBS
 	${OPENGL_LIBRARY}
-	${SDL2_LIBRARY}
-	${SDL2_IMAGE_LIBRARIES}
-	${SDL2_MIXER_LIBRARIES}
+	SDL3::SDL3
+	SDL3_image::SDL3_image
+	SDL3_mixer::SDL3_mixer
 	${BZIP2_LIBRARIES}
 	${FFTW_LIBRARIES}
 	${X11_LIBRARIES}

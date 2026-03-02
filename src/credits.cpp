@@ -779,9 +779,9 @@ void show_credits() {
     while (!quit) {
         list<SDL_Event> events = sys().poll_event_queue();
         for (list<SDL_Event>::iterator it = events.begin(); it != events.end(); ++it) {
-            if (it->type == SDL_KEYDOWN) {
+            if (it->type == SDL_EVENT_KEY_DOWN) {
                 quit = true;
-            } else if (it->type == SDL_MOUSEBUTTONUP) {
+            } else if (it->type == SDL_EVENT_MOUSE_BUTTON_UP) {
                 quit = true;
             }
         }

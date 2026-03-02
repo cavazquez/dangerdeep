@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include "oglext/OglExt.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <glu.h>
 
 #include "airplane.h"
@@ -408,7 +408,7 @@ void user_interface::process_input(const SDL_Event &event) {
         if (screen_selector->check_for_mouse_event(event)) {
             // drag for the menu
             // fixme: drag&drop support should be in widget class...
-            if (event.type == SDL_MOUSEMOTION) {
+            if (event.type == SDL_EVENT_MOUSE_MOTION) {
                 vector2i p = screen_selector->get_pos();
                 vector2i s = screen_selector->get_size();
                 // drag menu with left mouse button when on title or right mouse button else
@@ -431,7 +431,7 @@ void user_interface::process_input(const SDL_Event &event) {
         if (music_playlist->check_for_mouse_event(event)) {
             // drag for the menu
             // fixme: drag&drop support should be in widget class...
-            if (event.type == SDL_MOUSEMOTION) {
+            if (event.type == SDL_EVENT_MOUSE_MOTION) {
                 vector2i p = music_playlist->get_pos();
                 vector2i s = music_playlist->get_size();
                 vector2i pos = sys().translate_position(event);
@@ -456,12 +456,12 @@ void user_interface::process_input(const SDL_Event &event) {
         }
     }
 
-    if (event.type == SDL_KEYDOWN) {
-        if (config.getkey(KEY_TOGGLE_RELATIVE_BEARING).equal(event.key.keysym)) {
+    if (event.type == SDL_EVENT_KEY_DOWN) {
+        if (config.getkey(KEY_TOGGLE_RELATIVE_BEARING).equal(event.key)) {
             bearing_is_relative = !bearing_is_relative;
             add_message(texts::get(bearing_is_relative ? 220 : 221));
             return;
-        } else if (config.getkey(KEY_TOGGLE_POPUP).equal(event.key.keysym)) {
+        } else if (config.getkey(KEY_TOGGLE_POPUP).equal(event.key)) {
             toggle_popup();
             return;
         }

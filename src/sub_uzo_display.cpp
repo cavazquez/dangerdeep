@@ -125,11 +125,11 @@ void sub_uzo_display::process_input(class game &gm, const SDL_Event &event) {
     if (sub->is_submerged()) {
     }
     switch (event.type) {
-    case SDL_KEYDOWN:
-        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key.keysym)) {
+    case SDL_EVENT_KEY_DOWN:
+        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key)) {
             zoomed = !zoomed;
         } else {
-            switch (event.key.keysym.sym) {
+            switch (event.key.key) {
                 // filter away keys NP_1...NP_9 to avoid moving viewer like in freeview mode
             case SDLK_KP_8:
                 return;
@@ -148,7 +148,7 @@ void sub_uzo_display::process_input(class game &gm, const SDL_Event &event) {
             }
         }
         break;
-    case SDL_MOUSEBUTTONDOWN:
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
         if (event.wheel.y > 0) {
             zoomed = true;
         } else if (event.wheel.y < 0) {

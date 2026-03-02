@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define CFG_H
 
 #include "singleton.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <map>
 #include <string>
 
@@ -51,8 +51,8 @@ class cfg : public singleton<class cfg> {
             shift = k.shift;
             return *this;
         }
-        std::string get_name() const; // uses SDLK_GetKeyName
-        bool equal(const SDL_Keysym &ks) const;
+        std::string get_name() const; // uses SDL_GetKeyName
+        bool equal(const SDL_KeyboardEvent &ke) const;
     };
 
   private:

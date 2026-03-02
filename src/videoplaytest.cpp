@@ -27,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include "oglext/OglExt.h"
-#include <SDL.h>
-#include <SDL_net.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_net.h>
 #include <glu.h>
 
 #include "datadirs.h"
@@ -449,7 +449,7 @@ int mymain(list<string> &args) {
     while (!quit) {
         list<SDL_Event> events = sys().poll_event_queue();
         for (list<SDL_Event>::iterator it = events.begin(); it != events.end(); ++it) {
-            if (it->type == SDL_KEYDOWN) {
+            if (it->type == SDL_EVENT_KEY_DOWN) {
                 switch ((*it).key.keysym.sym) {
                 case SDLK_ESCAPE:
                     vpl.reset();
@@ -459,7 +459,7 @@ int mymain(list<string> &args) {
                     break;
                 }
             }
-            if (it->type == SDL_MOUSEBUTTONDOWN) {
+            if (it->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
                 paused = !paused;
                 tm = sys().millisec();
             }

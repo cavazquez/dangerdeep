@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "oglext/OglExt.h"
 #include "perlinnoise.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <glu.h>
 
 #include "angle.h"
@@ -575,7 +575,7 @@ void run() {
     while (!quit) {
         list<SDL_Event> events = sys().poll_event_queue();
         for (list<SDL_Event>::iterator it = events.begin(); it != events.end(); ++it) {
-            if (it->type == SDL_KEYDOWN) {
+            if (it->type == SDL_EVENT_KEY_DOWN) {
                 switch ((*it).key.keysym.sym) {
                 case SDLK_ESCAPE:
                     quit = true;
@@ -591,7 +591,7 @@ void run() {
                 }
                 // gcm.set_viewerpos(campos);
             }
-            if (it->type == SDL_MOUSEBUTTONDOWN) {
+            if (it->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
                 gcm.wireframe = !gcm.wireframe;
             }
         }

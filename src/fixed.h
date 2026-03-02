@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef FIXED_H
 #define FIXED_H
 
-#include <SDL_types.h>
+#include <SDL3/SDL_stdinc.h>
 
 ///\brief Implementation of a fixed point number.
 class fixed32 {

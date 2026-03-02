@@ -19,7 +19,7 @@
 
 /* Splits the ETOPO1 cell-centered float binary file into tiles */
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <fstream>
 #include <list>
 #include <sstream>

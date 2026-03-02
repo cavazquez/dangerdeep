@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "shader.h"
 #include "system.h"
 #include "triangle_intersection.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 using std::vector;
 
@@ -115,8 +115,8 @@ int mymain(list<string> &args) {
         list<SDL_Event> events = sys().poll_event_queue();
         for (list<SDL_Event>::iterator it = events.begin(); it != events.end(); ++it) {
             SDL_Event &event = *it;
-            if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
+            if (event.type == SDL_EVENT_KEY_DOWN) {
+                switch (event.key.key) {
                 case SDLK_ESCAPE:
                     doquit = true;
                     break;
@@ -163,7 +163,7 @@ int mymain(list<string> &args) {
                 default:
                     break;
                 }
-            } else if (event.type == SDL_MOUSEMOTION) {
+            } else if (event.type == SDL_EVENT_MOUSE_MOTION) {
                 vector2 motion = sys().translate_motion(event);
                 if (event.motion.state & SDL_BUTTON_RMASK) {
                     matrix4f transf;
@@ -205,7 +205,7 @@ int mymain(list<string> &args) {
                     viewangles.y += motion.x;
                     viewangles.z += motion.y;
                 }
-            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            } else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
                 if (event.button.button == SDL_BUTTON_WHEELUP) {
                     pos.z -= 1;
                 } else if (event.button.button == SDL_BUTTON_WHEELDOWN) {

@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include "oglext/OglExt.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <glu.h>
 
 #include "datadirs.h"
@@ -210,8 +210,8 @@ void run() {
         vector3 sideward = invmvr.column3(0) * movesc;
         for (list<SDL_Event>::iterator it = events.begin(); it != events.end(); ++it) {
             SDL_Event &event = *it;
-            if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
+            if (event.type == SDL_EVENT_KEY_DOWN) {
+                switch (event.key.key) {
                 case SDLK_ESCAPE:
                     return;
                 case SDLK_KP4:
@@ -235,8 +235,8 @@ void run() {
                 default:
                     break;
                 }
-            } else if (event.type == SDL_KEYUP) {
-                switch (event.key.keysym.sym) {
+            } else if (event.type == SDL_EVENT_KEY_UP) {
+                switch (event.key.key) {
                 case SDLK_KP4:
                     mv_sideward = 0;
                     break;
@@ -258,7 +258,7 @@ void run() {
                 default:
                     break;
                 }
-            } else if (event.type == SDL_MOUSEMOTION) {
+            } else if (event.type == SDL_EVENT_MOUSE_MOTION) {
                 vector2 motion = sys().translate_motion(event) * 0.5;
                 if (event.motion.state & SDL_BUTTON_LMASK) {
                     viewangles.z -= motion.x;
@@ -269,7 +269,7 @@ void run() {
                     // 					pos.x += motion.x;
                     // 					pos.y += motion.y;
                 }
-            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            } else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
                 // 				if (event.button.button == SDL_BUTTON_WHEELUP) {
                 // 					pos.z -= movesc;
                 // 				} else if (event.button.button == SDL_BUTTON_WHEELDOWN) {

@@ -98,7 +98,7 @@ void sub_tdc_display::process_input(class game &gm, const SDL_Event &event) {
         const scheme_screen1 &s = *myscheme1;
 
         switch (event.type) {
-        case SDL_MOUSEBUTTONDOWN: {
+        case SDL_EVENT_MOUSE_BUTTON_DOWN: {
             mx = sys().translate_position_x(event);
             my = sys().translate_position_y(event);
             // check if mouse is over parallax display
@@ -114,7 +114,7 @@ void sub_tdc_display::process_input(class game &gm, const SDL_Event &event) {
             }
 
         } break;
-        case SDL_MOUSEMOTION:
+        case SDL_EVENT_MOUSE_MOTION:
             if (event.motion.state & SDL_BUTTON_LMASK) {
                 mx = sys().translate_position_x(event);
                 my = sys().translate_position_y(event);
@@ -141,7 +141,7 @@ void sub_tdc_display::process_input(class game &gm, const SDL_Event &event) {
         const scheme_screen2 &s = *myscheme2;
 
         switch (event.type) {
-        case SDL_MOUSEBUTTONDOWN: {
+        case SDL_EVENT_MOUSE_BUTTON_DOWN: {
             mx = sys().translate_position_x(event);
             my = sys().translate_position_y(event);
             // check if mouse is over tube indicators
@@ -171,15 +171,15 @@ void sub_tdc_display::process_input(class game &gm, const SDL_Event &event) {
 
     /*
             switch (event.type) {
-            case SDL_KEYDOWN:
+            case SDL_EVENT_KEY_DOWN:
                     //fixme
             default: break;
             }
     */
 
     /* this keypress never arrives here, toggle_popup eats it earlier.
-    if (event.type == SDL_KEYDOWN) {
-            if (cfg::instance().getkey(KEY_TOGGLE_POPUP).equal(event.key.keysym)) {
+    if (event.type == SDL_EVENT_KEY_DOWN) {
+            if (cfg::instance().getkey(KEY_TOGGLE_POPUP).equal(event.key)) {
                     next_sub_screen(gm.is_day_mode());
             }
     }

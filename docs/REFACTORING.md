@@ -23,16 +23,24 @@ Documento de trabajo con mejoras de arquitectura y buenas prácticas, priorizada
 ## Prioridad alta (impacto en acoplamiento / compilación)
 
 1. **Migración SDL2 → SDL3**
-   - **Estado**: Pendiente. SDL3 no está instalado en el sistema actualmente (verificado 2026-03-01).
+   - **Estado**: ✅ SDL3 3.4.0 instalado (2026-03-02). Listo para migración.
+   - **Ubicación**: `/usr/local/lib/libSDL3.so`, `/usr/local/lib/libSDL3_image.so`, `/usr/local/lib/libSDL3_mixer.so`
    - **Alcance**: Migrar todos los subsistemas que usan SDL2: system.h/cpp, music.h/cpp, image.h/cpp, texture.h/cpp, y otros archivos que usan SDL directamente.
    - **Cambios principales esperados**:
-     - Actualización de nombres de funciones (SDL_CreateWindow → SDL_CreateWindow con nuevos parámetros)
-     - Cambios en sistema de eventos (SDL_PollEvent → SDL_PollEvent con estructura modificada)
-     - Actualización de sistema de audio (SDL_mixer)
-     - Cambios en carga de imágenes (SDL_image)
-     - Modificación de manejo de texturas y rendering
-   - **Prerequisitos**: Instalar SDL3, SDL3_mixer, SDL3_image en el sistema. Actualizar CMakeLists.txt para detectar SDL3.
-   - **Estrategia**: Migración incremental por subsistema (system → audio → graphics → input), compilando y testeando después de cada cambio.
+     - CMakeLists.txt: find_package(SDL3 3.4.0) en lugar de SDL2
+     - Headers: `#include <SDL3/SDL.h>` en lugar de `<SDL2/SDL.h>`
+     - Tipos: SDL_Window, SDL_Renderer, SDL_Texture siguen igual
+     - Eventos: SDL_Event estructura modificada, algunos eventos renombrados
+     - Audio: SDL3_mixer API cambios (Mix_* functions)
+     - Imágenes: SDL3_image cambios mínimos
+     - Inicialización: SDL_Init() cambios en flags
+   - **Estrategia**: Migración incremental por subsistema:
+     1. CMakeLists.txt (detectar SDL3)
+     2. system.h/cpp (inicialización, ventana, eventos)
+     3. image.h/cpp y texture.h/cpp (carga de imágenes)
+     4. music.h/cpp (audio/música)
+     5. Archivos que usan SDL directamente (input, rendering)
+     6. Compilar y testear después de cada cambio
    - **Referencia**: [SDL3 Migration Guide](https://github.com/libsdl-org/SDL/blob/main/docs/README-migration.md)
 
 ---

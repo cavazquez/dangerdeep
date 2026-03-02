@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 
 #include <GL/glu.h>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 ship_interface::ship_interface(ship *player_ship, game &gm) : user_interface(player_ship, gm) {
 }

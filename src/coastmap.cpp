@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "texture.h"
 #include "triangulate.h"
 #include "xml.h"
-#include <SDL_image.h>
+#include <SDL3_image/SDL_image.h>
 #include <fstream>
 #include <list>
 #include <vector>

@@ -31,7 +31,7 @@
 #include "vector2.h"
 #include "vector3.h"
 #include "xml.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <fstream>
 #include <iostream>
 #include <math.h>

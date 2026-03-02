@@ -278,7 +278,7 @@ void sub_torpedo_display::process_input(class game &gm, const SDL_Event &event) 
     //  increase/decrease torp_desc_line when clicking on desc text area or using mouse wheel
 
     switch (event.type) {
-    case SDL_MOUSEBUTTONDOWN:
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
         // check if there is a tube below the mouse and set torptranssrc
         if (event.button.button == SDL_BUTTON_LEFT) {
             torptranssrc = get_tube_below_mouse(get_tubecoords(sub));
@@ -296,7 +296,7 @@ void sub_torpedo_display::process_input(class game &gm, const SDL_Event &event) 
             ++torp_desc_line;
         }
         break;
-    case SDL_MOUSEBUTTONUP:
+    case SDL_EVENT_MOUSE_BUTTON_UP:
         // check if there is a tube below and if its empty
         if (event.button.button == SDL_BUTTON_LEFT) {
             unsigned torptransdst = get_tube_below_mouse(get_tubecoords(sub));
@@ -310,7 +310,7 @@ void sub_torpedo_display::process_input(class game &gm, const SDL_Event &event) 
             mb &= ~SDL_BUTTON_LMASK;
         }
         break;
-    case SDL_MOUSEMOTION:
+    case SDL_EVENT_MOUSE_MOTION:
         mx = sys().translate_position_x(event);
         my = sys().translate_position_y(event);
         mb = event.motion.state;

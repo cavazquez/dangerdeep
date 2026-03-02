@@ -66,11 +66,11 @@ sub_bridge_display::sub_bridge_display(user_interface &ui_) : freeview_display(u
 
 void sub_bridge_display::process_input(class game &gm, const SDL_Event &event) {
     switch (event.type) {
-    case SDL_KEYDOWN:
-        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key.keysym)) {
+    case SDL_EVENT_KEY_DOWN:
+        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key)) {
             glasses_in_use = !glasses_in_use;
         } else {
-            switch (event.key.keysym.sym) {
+            switch (event.key.key) {
                 // filter away keys NP_1...NP_9 to avoid moving viewer like in freeview mode
             case SDLK_KP_8:
                 return;
@@ -88,7 +88,7 @@ void sub_bridge_display::process_input(class game &gm, const SDL_Event &event) {
                 break;
             }
         }
-    case SDL_MOUSEWHEEL:
+    case SDL_EVENT_MOUSE_WHEEL:
         if (event.wheel.y > 0) {
             return;
         } else if (event.wheel.y < 0) {

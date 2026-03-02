@@ -152,8 +152,8 @@ void freeview_display::process_input(class game &gm, const SDL_Event &event) {
     vector3 forward = -viewmatrix.row3(2);
 
     switch (event.type) {
-    case SDL_KEYDOWN:
-        switch (event.key.keysym.sym) {
+    case SDL_EVENT_KEY_DOWN:
+        switch (event.key.key) {
         case SDLK_KP_8:
             add_pos -= forward * 15;
             break;
@@ -182,14 +182,14 @@ void freeview_display::process_input(class game &gm, const SDL_Event &event) {
             break;
         }
         break;
-    case SDL_MOUSEMOTION:
+    case SDL_EVENT_MOUSE_MOTION:
         if (event.motion.state & SDL_BUTTON_LMASK) {
             ui.add_bearing(sys().translate_motion_x(event) * 0.5);
             ui.add_elevation(-sys().translate_motion_y(event) * 0.5);
             // fixme handle clamping of elevation at +-90deg
         }
         break;
-    case SDL_MOUSEWHEEL: // Come up with a better scheme later on if this one does
+    case SDL_EVENT_MOUSE_WHEEL: // Come up with a better scheme later on if this one does
                          // not pan out.
         if (event.wheel.y > 0) {
             add_pos += forward * 15;

@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define BINSTREAM_H
 
 #include "quaternion.h"
-#include <SDL_endian.h>
-#include <SDL_types.h>
+#include <SDL3/SDL_endian.h>
+#include <SDL3/SDL_stdinc.h>
 #include <iostream>
 #include <string>
 
@@ -59,17 +59,17 @@ inline void write_i8(std::ostream &out, Sint8 i) {
 }
 
 inline void write_i16(std::ostream &out, Sint16 i) {
-    Uint16 ii = SDL_SwapLE16((Uint16)i);
+    Uint16 ii = SDL_Swap16LE((Uint16)i);
     out.write((char *)&ii, 2);
 }
 
 inline void write_i32(std::ostream &out, Sint32 i) {
-    Uint32 ii = SDL_SwapLE32((Uint32)i);
+    Uint32 ii = SDL_Swap32LE((Uint32)i);
     out.write((char *)&ii, 4);
 }
 
 inline void write_i64(std::ostream &out, Sint64 i) {
-    Uint64 ii = SDL_SwapLE64((Uint64)i);
+    Uint64 ii = SDL_Swap64LE((Uint64)i);
     out.write((char *)&ii, 8);
 }
 
@@ -79,17 +79,17 @@ inline void write_u8(std::ostream &out, Uint8 i) {
 }
 
 inline void write_u16(std::ostream &out, Uint16 i) {
-    Uint16 ii = SDL_SwapLE16(i);
+    Uint16 ii = SDL_Swap16LE(i);
     out.write((char *)&ii, 2);
 }
 
 inline void write_u32(std::ostream &out, Uint32 i) {
-    Uint32 ii = SDL_SwapLE32(i);
+    Uint32 ii = SDL_Swap32LE(i);
     out.write((char *)&ii, 4);
 }
 
 inline void write_u64(std::ostream &out, Uint64 i) {
-    Uint64 ii = SDL_SwapLE64(i);
+    Uint64 ii = SDL_Swap64LE(i);
     out.write((char *)&ii, 8);
 }
 
@@ -102,19 +102,19 @@ inline Sint8 read_i8(std::istream &in) {
 inline Sint16 read_i16(std::istream &in) {
     Uint16 i = 0;
     in.read((char *)&i, 2);
-    return Sint16(SDL_SwapLE16(i));
+    return Sint16(SDL_Swap16LE(i));
 }
 
 inline Sint32 read_i32(std::istream &in) {
     Uint32 i = 0;
     in.read((char *)&i, 4);
-    return Sint32(SDL_SwapLE32(i));
+    return Sint32(SDL_Swap32LE(i));
 }
 
 inline Sint64 read_i64(std::istream &in) {
     Uint64 i = 0;
     in.read((char *)&i, 8);
-    return Sint64(SDL_SwapLE64(i));
+    return Sint64(SDL_Swap64LE(i));
 }
 
 inline Uint8 read_u8(std::istream &in) {
@@ -126,19 +126,19 @@ inline Uint8 read_u8(std::istream &in) {
 inline Uint16 read_u16(std::istream &in) {
     Uint16 i = 0;
     in.read((char *)&i, 2);
-    return Uint16(SDL_SwapLE16(i));
+    return Uint16(SDL_Swap16LE(i));
 }
 
 inline Uint32 read_u32(std::istream &in) {
     Uint32 i = 0;
     in.read((char *)&i, 4);
-    return Uint32(SDL_SwapLE32(i));
+    return Uint32(SDL_Swap32LE(i));
 }
 
 inline Uint64 read_u64(std::istream &in) {
     Uint64 i = 0;
     in.read((char *)&i, 8);
-    return Uint64(SDL_SwapLE64(i));
+    return Uint64(SDL_Swap64LE(i));
 }
 
 inline void write_bool(std::ostream &out, bool b) {

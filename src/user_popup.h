@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef USER_POPUP_H
 #define USER_POPUP_H
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <list>
 
 class user_popup {

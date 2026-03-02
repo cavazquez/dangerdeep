@@ -42,8 +42,8 @@ string cfg::key::get_name() const {
     return result;
 }
 
-bool cfg::key::equal(const SDL_Keysym &ks) const {
-    return (ks.sym == keysym && ctrl == ((ks.mod & (KMOD_LCTRL | KMOD_RCTRL)) != 0) && alt == ((ks.mod & (KMOD_LALT | KMOD_RALT | KMOD_MODE)) != 0) && shift == ((ks.mod & (KMOD_LSHIFT | KMOD_RSHIFT)) != 0));
+bool cfg::key::equal(const SDL_KeyboardEvent &ke) const {
+    return (ke.key == keysym && ctrl == ((ke.mod & (SDL_KMOD_LCTRL | SDL_KMOD_RCTRL)) != 0) && alt == ((ke.mod & (SDL_KMOD_LALT | SDL_KMOD_RALT | SDL_KMOD_MODE)) != 0) && shift == ((ke.mod & (SDL_KMOD_LSHIFT | SDL_KMOD_RSHIFT)) != 0));
 }
 
 cfg::cfg() {

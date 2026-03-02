@@ -46,7 +46,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "vector3.h"
 #include "widget.h"
 #include "xml.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <glu.h>
 
 #define VIEWMODEL
@@ -513,8 +513,8 @@ void view_model(const string &modelfilename, const string &datafilename) {
         list<SDL_Event> events = sys().poll_event_queue();
         for (list<SDL_Event>::iterator it = events.begin(); it != events.end(); ++it) {
             SDL_Event &event = *it;
-            if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
+            if (event.type == SDL_EVENT_KEY_DOWN) {
+                switch (event.key.key) {
                 case SDLK_ESCAPE:
                     return;
                 case SDLK_KP4:
@@ -540,7 +540,7 @@ void view_model(const string &modelfilename, const string &datafilename) {
                     break;
                 case SDLK_s: {
                     // Allow user to save smoke position
-                    if (smoke && (SDL_GetModState() & (KMOD_LCTRL | KMOD_RCTRL))) {
+                    if (smoke && (SDL_GetModState() & (SDL_KMOD_LCTRL | SDL_KMOD_RCTRL))) {
                         try {
                             xml_doc dataxml(datafilename);
                             dataxml.load();
@@ -576,7 +576,7 @@ void view_model(const string &modelfilename, const string &datafilename) {
                 default:
                     break;
                 }
-            } else if (event.type == SDL_MOUSEMOTION) {
+            } else if (event.type == SDL_EVENT_MOUSE_MOTION) {
                 vector2 motion = sys().translate_motion(event) * 0.5;
                 if (event.motion.state & SDL_BUTTON_LMASK) {
                     viewangles.y += motion.x;
@@ -588,11 +588,11 @@ void view_model(const string &modelfilename, const string &datafilename) {
                     pos.x += motion.x;
                     pos.y += motion.y;
                 }
-            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            } else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
                 // Check if x,,y,z are pressed and if so mouse wheel moves smoke position by delta.
                 // delta is either 1.0 if a shift key is pressed or 0.1 otherwise.
                 Uint8 *keys = SDL_GetKeyState(NULL);
-                float delta = (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) ? 1.000 : 0.100;
+                float delta = (SDL_GetModState() & (SDL_KMOD_LSHIFT | SDL_KMOD_RSHIFT)) ? 1.000 : 0.100;
 
                 if (event.button.button == SDL_BUTTON_WHEELUP) {
                     if (keys[SDLK_x]) {

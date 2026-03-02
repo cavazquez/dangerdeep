@@ -34,8 +34,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "primitives.h"
 #include "texture.h"
 #include "vector3.h"
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -582,7 +582,7 @@ void texture::load_dds(const std::string &filename, dds_data &target) {
     //
     target.components = 4;
 
-    switch (SDL_SwapLE32(header.FourCC)) {
+    switch (SDL_Swap32LE(header.FourCC)) {
     case MAKEFOURCC('D', 'X', 'T', '1'):
         // DXT1's compression ratio is 8:1
         target.format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
@@ -609,13 +609,13 @@ void texture::load_dds(const std::string &filename, dds_data &target) {
     // How big will the buffer need to be to load all of the pixel data
     // including mip-maps?
 
-    if (SDL_SwapLE32(header.LinearSize) == 0)
+    if (SDL_Swap32LE(header.LinearSize) == 0)
         throw error("linear size in dds file is 0: " + filename);
 
     if (header.MipMapCount > 1)
-        bufferSize = SDL_SwapLE32(header.LinearSize) * factor;
+        bufferSize = SDL_Swap32LE(header.LinearSize) * factor;
     else
-        bufferSize = SDL_SwapLE32(header.LinearSize);
+        bufferSize = SDL_Swap32LE(header.LinearSize);
 
     target.pixels.resize(bufferSize);
 
@@ -624,9 +624,9 @@ void texture::load_dds(const std::string &filename, dds_data &target) {
     // Close the file
     file.close();
 
-    target.width = SDL_SwapLE32(header.Width);
-    target.height = SDL_SwapLE32(header.Height);
-    target.numMipMaps = SDL_SwapLE32(header.MipMapCount);
+    target.width = SDL_Swap32LE(header.Width);
+    target.height = SDL_Swap32LE(header.Height);
+    target.numMipMaps = SDL_Swap32LE(header.MipMapCount);
 }
 #undef MAKEFOURCC
 

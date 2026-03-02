@@ -40,7 +40,7 @@ using std::set;
 #include "texts.h"
 #include "user_display.h"
 #include <GL/glu.h>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // #include "widget.h"
 

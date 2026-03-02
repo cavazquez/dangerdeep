@@ -187,19 +187,19 @@ sub_periscope_display::~sub_periscope_display() {
 
 void sub_periscope_display::process_input(class game &gm, const SDL_Event &event) {
     switch (event.type) {
-    case SDL_KEYDOWN:
-        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key.keysym)) {
+    case SDL_EVENT_KEY_DOWN:
+        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key)) {
             zoomed = !zoomed;
         }
         break;
-    case SDL_MOUSEWHEEL:
+    case SDL_EVENT_MOUSE_WHEEL:
         if (event.wheel.y > 0) {
             zoomed = true;
         } else if (event.wheel.y < 0) {
             zoomed = false;
         }
         return;
-    case SDL_MOUSEMOTION:
+    case SDL_EVENT_MOUSE_MOTION:
         if (event.motion.state & SDL_BUTTON_LMASK) {
             if (event.motion.yrel != 0) {
                 // remove y motion, replace by scope raise/lower code

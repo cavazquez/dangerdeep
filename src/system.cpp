@@ -27,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include "oglext/OglExt.h"
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <glu.h>
 
 #include "font.h"
@@ -133,7 +133,7 @@ system::system(const parameters &params_) : params(params_),
     if (numdisplaymode == 0)
         throw sdl_error("Failed to query number of display modes");
 
-    std::vector<SDL_DisplayMode> modes; //
+    std::vector<SDL3/SDL_DisplayMode> modes; //
     SDL_DisplayMode *dummy = new SDL_DisplayMode;
 
     for (int i = 0; i < SDL_GetNumDisplayModes(0); ++i) {
@@ -537,7 +537,7 @@ list<SDL_Event> system::poll_event_queue() {
         unsigned nr_of_events = 0;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-            case SDL_QUIT: // Quit event
+            case SDL_EVENT_QUIT: // Quit event
                 log_info("---------- immediate exit ----------");
                 log::instance().write(std::cerr, log::LOG_SYSINFO);
                 {
@@ -580,15 +580,15 @@ list<SDL_Event> system::poll_event_queue() {
                 */
                 // !Rake:
 
-            case SDL_KEYDOWN: // Keyboard event - key down
-                if (event.key.keysym.scancode == SDL_SCANCODE_KP_POWER)
+            case SDL_EVENT_KEY_DOWN: // Keyboard event - key down
+                if (event.key.scancode == SDL_SCANCODE_KP_POWER)
                     show_console = !show_console;
                 break;
 
-            case SDL_KEYUP: // pass known events through
-            case SDL_MOUSEMOTION:
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
+            case SDL_EVENT_KEY_UP: // pass known events through
+            case SDL_EVENT_MOUSE_MOTION:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
                 break;
 
             default: // by default don't pass though unknown events
@@ -607,14 +607,14 @@ list<SDL_Event> system::poll_event_queue() {
 }
 
 double system::translate_motion_x(const SDL_Event &event) {
-    if (event.type == SDL_MOUSEMOTION)
+    if (event.type == SDL_EVENT_MOUSE_MOTION)
         return event.motion.xrel * double(res_x_2d) / res_area_2d_w;
     else
         return 0.0;
 }
 
 double system::translate_motion_y(const SDL_Event &event) {
-    if (event.type == SDL_MOUSEMOTION)
+    if (event.type == SDL_EVENT_MOUSE_MOTION)
         return event.motion.yrel * double(res_y_2d) / res_area_2d_h;
     else
         return 0.0;
@@ -625,14 +625,14 @@ vector2 system::translate_motion(const SDL_Event &event) {
 }
 
 int system::translate_position_x(const SDL_Event &event) {
-    if (event.type == SDL_MOUSEMOTION)
+    if (event.type == SDL_EVENT_MOUSE_MOTION)
         return transform_2d_x(event.motion.x);
     else
         return transform_2d_x(event.button.x);
 }
 
 int system::translate_position_y(const SDL_Event &event) {
-    if (event.type == SDL_MOUSEMOTION)
+    if (event.type == SDL_EVENT_MOUSE_MOTION)
         return transform_2d_y(event.motion.y);
     else
         return transform_2d_y(event.button.y);
