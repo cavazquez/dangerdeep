@@ -8,6 +8,7 @@ set(DFTDSOURCES
 	bzip.cpp
 	caustics.cpp
 	cfg.cpp
+	coast_renderer.cpp
 	coastmap.cpp
 	convoy.cpp
 	countrycodes.cpp
@@ -32,8 +33,10 @@ set(DFTDSOURCES
 	music.cpp
 	parser.cpp
 	particle.cpp
+	panel_manager.cpp
 	sea_object.cpp
 	sensors.cpp
+	scene_environment.cpp
 	ship.cpp
 	ships_sunk_display.cpp
 	simplex_noise.cpp
@@ -67,10 +70,14 @@ set(DFTDSOURCES
 	tone_reproductor.cpp
 	torpedo.cpp
 	torpedo_camera_display.cpp
+	terrain_manager.cpp
 	triangulate.cpp
+	user_display.cpp
 	user_interface.cpp
+	ui_messages.cpp
 	water.cpp
 	water_splash.cpp
+	weather_renderer.cpp
 	world.cpp
 	)
 

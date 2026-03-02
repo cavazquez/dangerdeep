@@ -84,32 +84,29 @@ void sub_uzo_display::post_display(game &gm) const {
         ui.show_target(pd.x, pd.y, pd.w, pd.h, get_viewpos(gm));
     }
 
-    sys().prepare_2d_drawing();
+    draw_with_2d_and_panel([&]() {
+        int tex_w = compass->get_width();
+        int tex_h = compass->get_height();
 
-    int tex_w = compass->get_width();
-    int tex_h = compass->get_height();
+        int bearing = int(tex_w * ui.get_relative_bearing().value() / 360);
 
-    int bearing = int(tex_w * ui.get_relative_bearing().value() / 360);
-
-    if (bearing > dx && bearing < tex_w - dx) {
-        compass->draw_subimage(xi, yi, comp_size, tex_h, bearing - dx, 0, comp_size, tex_h);
-    } else {
-        int dx1 = 0, dx2 = 0;
-        if (bearing < dx) {
-            dx1 = dx - bearing;
-            dx2 = dx + bearing;
-        } else if (bearing > tex_w - dx) {
-            dx1 = dx + (tex_w - bearing);
-            dx2 = comp_size - dx;
+        if (bearing > dx && bearing < tex_w - dx) {
+            compass->draw_subimage(xi, yi, comp_size, tex_h, bearing - dx, 0, comp_size, tex_h);
+        } else {
+            int dx1 = 0, dx2 = 0;
+            if (bearing < dx) {
+                dx1 = dx - bearing;
+                dx2 = dx + bearing;
+            } else if (bearing > tex_w - dx) {
+                dx1 = dx + (tex_w - bearing);
+                dx2 = comp_size - dx;
+            }
+            compass->draw_subimage(xi, yi, dx1, tex_h, tex_w - (dx1), 0, dx1, tex_h);
+            compass->draw_subimage(xi + dx1, yi, dx2, tex_h, 0, 0, dx2, tex_h);
         }
-        compass->draw_subimage(xi, yi, dx1, tex_h, tex_w - (dx1), 0, dx1, tex_h);
-        compass->draw_subimage(xi + dx1, yi, dx2, tex_h, 0, 0, dx2, tex_h);
-    }
 
-    uzotex->draw(0, 0, 1024, 768);
-    ui.draw_infopanel(true);
-
-    sys().unprepare_2d_drawing();
+        uzotex->draw(0, 0, 1024, 768);
+    }, true);
 }
 
 sub_uzo_display::sub_uzo_display(user_interface &ui_) : freeview_display(ui_), zoomed(false) {
@@ -126,7 +123,7 @@ void sub_uzo_display::process_input(class game &gm, const SDL_Event &event) {
     }
     switch (event.type) {
     case SDL_EVENT_KEY_DOWN:
-        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key)) {
+        if (ui.get_config().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key)) {
             zoomed = !zoomed;
         } else {
             switch (event.key.key) {

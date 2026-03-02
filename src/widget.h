@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "model.h"
 #include "objcache.h"
 #include "vector2.h"
-#include "xml.h"
 #include <list>
 #include <string>
 #include <typeinfo>
@@ -36,6 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Forward declarations
 class image;
 class texture;
+class xml_elem;
 
 // fixme: add image-widget
 

@@ -47,12 +47,11 @@ freeview_display::projection_data sub_bridge_display::get_projection_data(game &
 }
 
 void sub_bridge_display::post_display(game &gm) const {
-    sys().prepare_2d_drawing();
-    if (glasses_in_use) {
-        glasses_tex->draw(0, 0, 1024, 768);
-    }
-    ui.draw_infopanel(true);
-    sys().unprepare_2d_drawing();
+    draw_with_2d_and_panel([this]() {
+        if (glasses_in_use) {
+            glasses_tex->draw(0, 0, 1024, 768);
+        }
+    }, true);
 }
 
 sub_bridge_display::sub_bridge_display(user_interface &ui_) : freeview_display(ui_), glasses_in_use(false) {
@@ -67,7 +66,7 @@ sub_bridge_display::sub_bridge_display(user_interface &ui_) : freeview_display(u
 void sub_bridge_display::process_input(class game &gm, const SDL_Event &event) {
     switch (event.type) {
     case SDL_EVENT_KEY_DOWN:
-        if (cfg::instance().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key)) {
+        if (ui.get_config().getkey(KEY_TOGGLE_ZOOM_OF_VIEW).equal(event.key)) {
             glasses_in_use = !glasses_in_use;
         } else {
             switch (event.key.key) {

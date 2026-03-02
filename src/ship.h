@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <map>
 
 class game;
+class particle;
 
 ///\brief Base class for all ships and ship-like objects: ships, submarines, torpedoes.
 /** Handles steering and rudder simulation,
@@ -315,7 +316,7 @@ class ship : public sea_object {
     virtual double get_fuel_level() const { return fuel_level; }
     virtual angle get_turn_rate() const { return turn_rate; };
     virtual double get_max_speed() const { return max_speed_forward; };
-    virtual throttle_status get_throttle() { return (throttle_status)throttle; }
+    virtual throttle_status get_throttle() const { return (throttle_status)throttle; }
     virtual double get_throttle_speed() const;
     virtual double get_throttle_accel() const; // returns acceleration caused by current throttle
     virtual bool screw_cavitation() const;     // returns true if screw causes cavitation

@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "game.h"
 #include "game_editor.h"
 #include "global_data.h"
+#include "height_generator.h"
 #include "image.h"
 #include "keys.h"
 #include "ship.h"
@@ -1027,10 +1028,10 @@ void map_display::process_input(class game &gm, const SDL_Event &event) {
         }
 #endif
     case SDL_EVENT_KEY_DOWN:
-        if (cfg::instance().getkey(KEY_ZOOM_MAP).equal(event.key)) {
+        if (ui.get_config().getkey(KEY_ZOOM_MAP).equal(event.key)) {
             if (mapzoom < 1)
                 mapzoom *= 2;
-        } else if (cfg::instance().getkey(KEY_UNZOOM_MAP).equal(event.key)) {
+        } else if (ui.get_config().getkey(KEY_UNZOOM_MAP).equal(event.key)) {
             if (mapzoom > 1.0 / 16384)
                 mapzoom /= 2;
         }

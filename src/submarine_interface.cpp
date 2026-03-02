@@ -172,52 +172,6 @@ void submarine_interface::fire_tube(submarine *player, int nr) {
             add_message(texts::get(138));
         }
 
-#if 0 // old code
-		submarine::stored_torpedo::st_status tube_status = submarine::stored_torpedo::st_empty;		
-		
-		// fixme: ask TDC!
-		// depends on direction of target and wether we have bow/stern tube and wether the
-		// tube is not empty!
-		if (true /*player->can_torpedo_be_launched(nr, target, tube_status)*/) {
-			add_message(texts::get(49));
-			ostringstream oss;
-			oss << texts::get(49);
-			if (target)
-				oss << " " << texts::get(6) << ": " << target->get_description(2);
-			mygame->add_logbook_entry(oss.str());
-			player->launch_torpedo(nr, target);
-			play_sound_effect(se_submarine_torpedo_launch, player->get_pos());
-		} else {
-			string failed_to_fire_msg;
-			
-			if (-1 != nr) {
-				switch (tube_status)
-				{
-					case submarine::stored_torpedo::st_empty:
-						failed_to_fire_msg = texts::get(134);  
-						break;
-					case submarine::stored_torpedo::st_reloading:
-						failed_to_fire_msg = texts::get(135);
-						break;
-					case submarine::stored_torpedo::st_unloading:
-						failed_to_fire_msg = texts::get(136);
-						break;
-					default:
-						// could happen when tube is loaded
-						// but gyro angle is invalid for
-						// current target
-						return;
-				}
-			} else {
-				if (true == player->get_torpedoes().empty())
-					failed_to_fire_msg = texts::get(137);
-				else
-					failed_to_fire_msg = texts::get(138);
-			}
-			
-			add_message(failed_to_fire_msg);
-		}
-#endif
     } else {
         add_message(texts::get(80));
     }
@@ -252,7 +206,7 @@ void submarine_interface::process_input(const SDL_Event &event) {
 
     // check for common keys
     if (event.type == SDL_EVENT_KEY_DOWN) {
-        const cfg &mycfg = cfg::instance();
+        const cfg &mycfg = get_config();
 
         // SCREENS
         if (event.key.key == SDLK_B)
@@ -489,7 +443,7 @@ void submarine_interface::process_input(const SDL_Event &event) {
             } else {
                 add_message(texts::get(269));
             }
-        } else if (cfg::instance().getkey(KEY_TAKE_SCREENSHOT).equal(event.key)) {
+        } else if (get_config().getkey(KEY_TAKE_SCREENSHOT).equal(event.key)) {
             sys().screenshot();
             log_info("screenshot taken.");
 

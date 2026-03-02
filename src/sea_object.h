@@ -28,16 +28,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdexcept>
 #include <string>
 
-#include "ai.h"
 #include "angle.h"
 #include "countrycodes.h"
 #include "matrix3.h"
+#include "objcache.h"
 #include "polygon.h"
 #include "quaternion.h"
-#include "sensors.h"
 #include "sonar.h"
 #include "vector3.h"
-#include "xml.h"
+
+// Forward declarations
+class ai;
+class game;
+class sensor;
+class sensors;
+class texture;
+class model;
+class xml_elem;
 
 /*
 fixme: global todo (2004/06/26):
@@ -53,6 +60,7 @@ fixme: global todo (2004/06/26):
 class game;
 class sensor;
 class texture;
+class model;
 
 ///\brief Base class for all physical objects in the game world. Simulates dynamics with position, velocity, acceleration etc.
 class sea_object {
@@ -183,7 +191,7 @@ class sea_object {
 
     // filename for model file (also used for modelcache requests), read from spec file
     std::string modelname;
-    class model *mymodel; // pointer to model object, store as quick lookup
+    mutable objcachet<model>::reference mymodel; // RAII wrapper for model from cache (mutable for lazy load)
 
     // model variants (layout / skin), read from spec file
     struct skin_variant {

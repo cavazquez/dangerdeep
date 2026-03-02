@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "depth_charge.h"
 #include "game.h"
 #include "gun_shell.h"
+#include "ui_messages.h"
 #include "model.h"
 #include "submarine.h" // needed for underwater sound reduction
 #include "submarine_interface.h"
@@ -40,6 +41,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "texts.h"
 #include "user_interface.h"
 #include "vector3.h"
+#include "weather_renderer.h"
+#include "terrain_manager.h"
+#include "scene_environment.h"
+#include "coast_renderer.h"
+#include "panel_manager.h"
 #include "widget.h"
 #include <iomanip>
 #include <iostream>
@@ -56,9 +62,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "sky.h"
 #include "water.h"
 using namespace std;
-
-const double message_vanish_time = 10;
-const double message_fadeout_time = 2;
 
 #undef RAIN
 #undef SNOW
@@ -88,28 +91,21 @@ user_interface::user_interface(game &gm) : mygame(&gm),
                                            screen_selector_visible(false),
                                            playlist_visible(false),
                                            main_menu_visible(false),
+                                           mymessages(std::make_unique<ui_message_queue>()),
                                            bearing(0),
                                            elevation(90),
                                            bearing_is_relative(true),
                                            current_display(0),
                                            current_popup(0),
-                                           mycoastmap(get_map_dir() + "default.xml"),
-                                           daymode(gm.is_day_mode()) {
+                                           myenvironment(std::make_unique<scene_environment>()),
+                                          mycoast(std::make_unique<coast_renderer>(get_map_dir() + "default.xml")),
+                                          daymode(gm.is_day_mode()),
+                                          myweather(std::make_unique<weather_renderer>()) {
     add_loading_screen("coast map initialized");
-    mysky = std::make_unique<sky>();
-    panel = std::make_unique<widget>(0, 768 - 32, 1024, 32, "", nullptr);
-    panel->set_background(0);
-    // ca. 1024-2*8 for 6 texts => 168 pix. for each text
-    int paneltextnrs[6] = {1, 4, 5, 2, 98, 61};
-    const char *paneltexts[6] = {"000", "000", "000", "000", "000", "00:00:00"};
-    for (int i = 0; i < 6; ++i) {
-        int off = 8 + i * (1024 - 2 * 8) / 6;
-        string tx = texts::get(paneltextnrs[i]);
-        vector2i sz = widget::get_theme()->myfont->get_size(tx);
-        panel->add_child(new widget_text(off, 4, 0, 0, tx));
-        panel_valuetexts[i] = new widget_text(off + 8 + sz.x, 4, 0, 0, paneltexts[i]);
-        panel->add_child(panel_valuetexts[i]);
-    }
+    
+    // Create panel manager
+    mypanel = std::make_unique<panel_manager>(0, 768 - 32, 1024, 32);
+    mypanel->set_visible(panel_visible);
 
     // create screen selector widget
     screen_selector = std::make_unique<widget>(0, 0, 256, 32, "", nullptr);
@@ -168,110 +164,6 @@ user_interface::user_interface(game &gm) : mygame(&gm),
     vector2i mmp = sys().get_res_2d() - main_menu->get_size();
     main_menu->set_pos(vector2i(mmp.x / 2, mmp.y / 2));
 
-    // create weather effects textures
-
-    // rain
-#ifdef RAIN
-#define NR_OF_RAIN_FRAMES 16
-#define NR_OF_RAIN_DROPS 800
-#define RAIN_TEX_W 256
-#define RAIN_TEX_H 256
-    raintex.resize(NR_OF_RAIN_FRAMES);
-    vector<Uint8> raintmptex(RAIN_TEX_W * RAIN_TEX_H * 2);
-
-    for (unsigned j = 0; j < NR_OF_RAIN_FRAMES; ++j) {
-        for (unsigned k = 0; k < RAIN_TEX_W * RAIN_TEX_H * 2; k += 2) {
-            raintmptex[k + 0] = 128;
-            raintmptex[k + 1] = 0;
-        }
-        for (unsigned i = 0; i < NR_OF_RAIN_DROPS; ++i) {
-            vector2i pos(rnd(RAIN_TEX_W - 2) + 2, rnd(RAIN_TEX_H - 2));
-            Uint8 c = rnd(64) + 128;
-            raintmptex[(RAIN_TEX_W * pos.y + pos.x) * 2 + 0] = c;
-            raintmptex[(RAIN_TEX_W * pos.y + pos.x) * 2 + 1] = 128;
-            pos.x -= 1;
-            pos.y += 1;
-            raintmptex[(RAIN_TEX_W * pos.y + pos.x) * 2 + 0] = c;
-            raintmptex[(RAIN_TEX_W * pos.y + pos.x) * 2 + 1] = 192;
-            pos.x -= 1;
-            pos.y += 1;
-            raintmptex[(RAIN_TEX_W * pos.y + pos.x) * 2 + 0] = c;
-            raintmptex[(RAIN_TEX_W * pos.y + pos.x) * 2 + 1] = 255;
-        }
-        raintex.reset(j, new texture(raintmptex, RAIN_TEX_W, RAIN_TEX_H, GL_LUMINANCE_ALPHA, texture::LINEAR_MIPMAP_LINEAR, texture::REPEAT));
-    }
-#endif
-    // snow
-#ifdef SNOW
-#define NR_OF_SNOW_FRAMES 23
-#define NR_OF_SNOW_FLAKES 2000
-#define SNOW_TEX_W 256
-#define SNOW_TEX_H 256
-    snowtex.resize(NR_OF_SNOW_FRAMES);
-    vector<Uint8> snowtmptex(SNOW_TEX_W * SNOW_TEX_H * 2, 255);
-    vector<vector2i> snowflakepos(NR_OF_SNOW_FLAKES);
-    vector<int> snowxrand(NR_OF_SNOW_FRAMES);
-
-    // create random x coordinate sequence (perturbation)
-    vector<unsigned> snowxtrans(SNOW_TEX_W);
-    for (unsigned k = 0; k < SNOW_TEX_W; ++k) {
-        snowxtrans[k] = k;
-    }
-    for (unsigned k = 0; k < SNOW_TEX_W * 20; ++k) {
-        unsigned a = rnd(SNOW_TEX_W), b = rnd(SNOW_TEX_W);
-        unsigned c = snowxtrans[a];
-        snowxtrans[a] = snowxtrans[b];
-        snowxtrans[b] = c;
-    }
-
-    for (unsigned j = 0; j < NR_OF_SNOW_FRAMES; ++j) {
-        snowxrand[j] = rnd(3) - 1;
-    }
-    snowflakepos[0] = vector2i(snowxtrans[0], 0);
-    for (unsigned i = 1; i < NR_OF_SNOW_FLAKES; ++i) {
-        vector2i oldpos = snowflakepos[i - 1];
-        for (unsigned j = 0; j < NR_OF_SNOW_FRAMES; ++j) {
-            oldpos.x += snowxrand[(j + 3 * i) % NR_OF_SNOW_FRAMES];
-            if (oldpos.x < 0)
-                oldpos.x += SNOW_TEX_W;
-            if (oldpos.x >= SNOW_TEX_W)
-                oldpos.x -= SNOW_TEX_W;
-            oldpos.y += 1; // fixme add more complex "fall down" function
-            if (oldpos.y >= SNOW_TEX_H) {
-                oldpos.x = snowxtrans[oldpos.x];
-                oldpos.y = 0;
-            }
-        }
-        snowflakepos[i] = oldpos;
-    }
-    for (unsigned i = 0; i < NR_OF_SNOW_FRAMES; ++i) {
-        for (unsigned k = 0; k < SNOW_TEX_W * SNOW_TEX_H * 2; k += 2)
-            snowtmptex[k + 1] = 0;
-        for (unsigned j = 0; j < NR_OF_SNOW_FLAKES; ++j) {
-            snowtmptex[(SNOW_TEX_H * snowflakepos[j].y + snowflakepos[j].x) * 2 + 1] = 255;
-            vector2i &oldpos = snowflakepos[j];
-            oldpos.x += snowxrand[(j + 3 * i) % NR_OF_SNOW_FRAMES];
-            if (oldpos.x < 0)
-                oldpos.x += SNOW_TEX_W;
-            if (oldpos.x >= SNOW_TEX_W)
-                oldpos.x -= SNOW_TEX_W;
-            oldpos.y += 1; // fixme add more complex "fall down" function
-            if (oldpos.y >= SNOW_TEX_H) {
-                oldpos.x = snowxtrans[oldpos.x];
-                oldpos.y = 0;
-            }
-        }
-        /*
-                        ostringstream oss;
-                        oss << "snowframe"<<i<<".pgm";
-                        ofstream osg(oss.str().c_str());
-                        osg << "P5\n"<<SNOW_TEX_W<<" "<<SNOW_TEX_H<<"\n255\n";
-                        osg.write((const char*)(&snowtmptex[0]), SNOW_TEX_W * SNOW_TEX_H);
-        */
-        snowtex.reset(i, new texture(snowtmptex, SNOW_TEX_W, SNOW_TEX_H, GL_LUMINANCE_ALPHA, texture::LINEAR_MIPMAP_LINEAR, texture::REPEAT));
-    }
-#endif
-
     particle::init();
 
     // level size is N * sample_spacing * 2^j, here we give n = log2(N)
@@ -285,14 +177,14 @@ user_interface::user_interface(game &gm) : mygame(&gm),
 
     add_loading_screen("user interface initialized");
 
-    mygeoclipmap = std::make_unique<geoclipmap>(TERRAIN_NR_LEVELS, TERRAIN_RESOLUTION_N, mygame->get_height_gen());
-    mygeoclipmap->set_viewerpos(gm.get_player()->get_pos());
+    myterrain = std::make_unique<terrain_manager>(TERRAIN_NR_LEVELS, TERRAIN_RESOLUTION_N, mygame->get_height_gen());
+    myterrain->set_viewer_position(gm.get_player()->get_pos());
 
     add_loading_screen("terrain loaded");
 }
 
 void user_interface::finish_construction() {
-    mycoastmap.finish_construction();
+    mycoast->finish_construction();
 }
 
 user_interface *user_interface::create(game &gm) {
@@ -387,14 +279,13 @@ void user_interface::set_time(double tm) {
         daymode = newdaymode;
     }
 
-    mysky->set_time(tm);
-    mycaustics.set_time(tm);
+    myenvironment->set_time(tm);
     mygame->get_water().set_time(tm);
 }
 
 void user_interface::process_input(const SDL_Event &event) {
     if (panel_visible) {
-        if (panel->check_for_mouse_event(event))
+        if (mypanel->check_mouse_event(event))
             return;
     }
 
@@ -505,58 +396,19 @@ void user_interface::show_target(double vx, double vy, double w, double h, const
 
 void user_interface::draw_terrain(const vector3 &viewpos, angle dir,
                                   double max_view_dist, bool mirrored, int above_water) const {
-#if 0
-	glPushMatrix();
-	glTranslated(0, 0, -viewpos.z);
-	// still needed to render the props.
-	mycoastmap.render(viewpos.xy(), max_view_dist, mirrored);
-	glPopMatrix();
-#endif
-
     // frustum is mirrored inside geoclipmap
     frustum viewfrustum = frustum::from_opengl();
     glPushMatrix();
     if (mirrored)
         glScalef(1.0f, 1.0f, -1.0f);
     viewfrustum.translate(viewpos);
-    mygeoclipmap->set_viewerpos(viewpos);
-    mygeoclipmap->display(viewfrustum, -viewpos, mirrored, above_water);
+    myterrain->set_viewer_position(viewpos);
+    myterrain->render(viewfrustum, -viewpos, mirrored, above_water);
     glPopMatrix();
 }
 
 void user_interface::draw_weather_effects() const {
-#if defined(RAIN) || defined(SNOW)
-    // draw layers of snow flakes or rain drops (test)
-    // get projection from frustum to view
-    matrix4 c2w = (matrix4::get_gl(GL_PROJECTION_MATRIX) * matrix4::get_gl(GL_MODELVIEW_MATRIX)).inverse();
-    // draw planes between z-near and z-far with ascending distance and 2d texture with flakes/strains
-    texture *tex = 0;
-#ifdef RAIN
-    unsigned sf = unsigned(mygame->get_time() * NR_OF_RAIN_FRAMES) % NR_OF_RAIN_FRAMES;
-    tex = raintex[sf];
-#endif
-#ifdef SNOW
-    unsigned sf = unsigned(mygame->get_time() * NR_OF_SNOW_FRAMES) % NR_OF_SNOW_FRAMES;
-    tex = snowtex[sf];
-#endif
-    // pd.near_z,pd.far_z
-    double zd[3] = {0.3, 0.9, 0.7};
-    // fixme: planes should be orthogonal to z=0 plane (xy billboarding)
-    for (unsigned i = 0; i < 1; ++i) {
-        vector3 p0 = c2w * vector3(-1, 1, zd[i]);
-        vector3 p1 = c2w * vector3(-1, -1, zd[i]);
-        vector3 p2 = c2w * vector3(1, -1, zd[i]);
-        vector3 p3 = c2w * vector3(1, 1, zd[i]);
-        primitives::textured_quad(vector3f(p1),
-                                  vector3f(p2),
-                                  vector3f(p3),
-                                  vector3f(p0),
-                                  *tex,
-                                  vector2f(0, 3),
-                                  vector2f(3, 0));
-        // fixme: uv size changes with depth
-    }
-#endif
+    myweather->draw(mygame->get_time());
 }
 
 void user_interface::toggle_pause() {
@@ -588,55 +440,40 @@ bool user_interface::time_scale_down() {
 
 void user_interface::draw_infopanel(bool onlytexts) const {
     if (!onlytexts && panel_visible) {
-        ostringstream os0;
-        os0 << setw(3) << left << mygame->get_player()->get_heading().ui_value();
-        panel_valuetexts[0]->set_text(os0.str());
-        ostringstream os1;
-        os1 << setw(3) << left << unsigned(fabs(round(sea_object::ms2kts(mygame->get_player()->get_speed()))));
-        panel_valuetexts[1]->set_text(os1.str());
-        ostringstream os2;
-        os2 << setw(3) << left << unsigned(round(std::max(0.0, -mygame->get_player()->get_pos().z)));
-        panel_valuetexts[2]->set_text(os2.str());
-        ostringstream os3;
-        os3 << setw(3) << left << get_absolute_bearing().ui_value();
-        panel_valuetexts[3]->set_text(os3.str());
-        ostringstream os4;
-        os4 << setw(3) << left << time_scale;
-        panel_valuetexts[4]->set_text(os4.str());
-        // compute time string
-        panel_valuetexts[5]->set_text(get_time_string(mygame->get_time()));
-
-        panel->draw();
+        // Prepare values for panel
+        double heading = mygame->get_player()->get_heading().ui_value();
+        double speed = sea_object::ms2kts(mygame->get_player()->get_speed());
+        double depth = -mygame->get_player()->get_pos().z;
+        double bearing = get_absolute_bearing().ui_value();
+        std::string time_str = get_time_string(mygame->get_time());
+        
+        // Draw panel with current values
+        mypanel->draw(heading, speed, depth, bearing, time_scale, time_str);
     }
 
-    // draw messages: fixme later move to separate function ?
-    double vanish_time = mygame->get_time() - message_vanish_time;
-    int y = (onlytexts ? sys().get_res_y_2d() : panel->get_pos().y) - font_vtremington12->get_height();
-    for (std::list<std::pair<double, std::string>>::const_reverse_iterator it = messages.rbegin();
-         it != messages.rend(); ++it) {
-        if (it->first < vanish_time)
-            break;
-        double alpha = std::min(1.0, (it->first - vanish_time) / message_fadeout_time);
-        font_vtremington12->print(0, y, it->second, color(255, 255, 255, Uint8(255 * alpha)), true);
-        y -= font_vtremington12->get_height();
-    }
+    // draw messages using message queue subsystem
+    int y = (onlytexts ? sys().get_res_y_2d() : mypanel->get_y_position());
+    mymessages->draw(mygame->get_time(), y, font_vtremington12);
 }
 
 void user_interface::add_message(const string &s) {
-    // add message
-    messages.push_back(std::make_pair(mygame->get_time(), s));
+    mymessages->add_message(s, mygame->get_time());
+}
 
-    // remove old messages
-    while (messages.size() > 6)
-        messages.pop_front();
-    double vanish_time = mygame->get_time() - message_vanish_time;
-    for (std::list<std::pair<double, std::string>>::iterator it = messages.begin(); it != messages.end();) {
-        if (it->first < vanish_time) {
-            it = messages.erase(it);
-        } else {
-            ++it;
-        }
-    }
+void user_interface::switch_geo_wire() {
+    myterrain->toggle_wireframe();
+}
+
+const sky &user_interface::get_sky() const {
+    return myenvironment->get_sky();
+}
+
+const caustics &user_interface::get_caustics() const {
+    return myenvironment->get_caustics();
+}
+
+const coastmap &user_interface::get_coastmap() const {
+    return mycoast->get_coastmap();
 }
 
 void user_interface::play_sound_effect(const string &se,

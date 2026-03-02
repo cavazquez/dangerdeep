@@ -23,10 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef USER_INTERFACE_H
 #define USER_INTERFACE_H
 
-#include "caustics.h"
-#include "coastmap.h"
+#include "angle.h"
 #include "color.h"
-#include "geoclipmap.h"
+#include <memory>
 #include "ptrvector.h"
 #include "user_display.h"
 #include "user_popup.h"
@@ -39,6 +38,15 @@ class water;
 class cfg;
 class music;
 class sea_object;
+class ui_message_queue;
+class weather_renderer;
+class terrain_manager;
+class scene_environment;
+class coast_renderer;
+class panel_manager;
+class sky;
+class caustics;
+class coastmap;
 
 ///\defgroup interfaces In-game user interfaces
 ///\brief Base class for a user interface for playing the game.
@@ -61,11 +69,9 @@ class user_interface {
     bool abort_request; // by user (back to game menu)
     unsigned time_scale;
 
-    // command panel, to submarine_interface!
-    // display texts above panel, fading out, no widget! fixme
+    // command panel
     bool panel_visible;
-    std::unique_ptr<class widget> panel;
-    class widget_text *panel_valuetexts[6];
+    std::unique_ptr<class panel_manager> mypanel;
 
     // screen selector menu
     std::unique_ptr<class widget> screen_selector;
@@ -82,8 +88,8 @@ class user_interface {
     std::unique_ptr<class widget> main_menu;
     bool main_menu_visible;
 
-    /// holds the last n messages. They're displayed above the panel and fading out over time.
-    std::list<std::pair<double, std::string>> messages;
+    /// Message queue subsystem for managing timed messages
+    std::unique_ptr<ui_message_queue> mymessages;
 
     // used in various screens
     angle bearing;
@@ -103,17 +109,15 @@ class user_interface {
     ptrvector<user_popup> popups;
 
     // environmental data
-    std::unique_ptr<class sky> mysky;         // the one and only sky
-    caustics mycaustics;                      //	caustic map
-    coastmap mycoastmap;                      // this may get moved to game.h, yet it is used for display only, that's why it is here
-    std::unique_ptr<geoclipmap> mygeoclipmap; // terrain rendering instance
+    std::unique_ptr<scene_environment> myenvironment; // sky and caustics subsystem
+    std::unique_ptr<coast_renderer> mycoast;          // coastline rendering subsystem
+    std::unique_ptr<terrain_manager> myterrain;       // terrain rendering subsystem
 
     // is display in day mode (or night/redlight mode)?
     bool daymode;
 
-    // weather graphics
-    ptrvector<class texture> raintex; // images (animation) of rain drops
-    ptrvector<class texture> snowtex; // images (animation) of snow flakes
+    /// Weather renderer subsystem
+    std::unique_ptr<weather_renderer> myweather;
 
     // free view mode
     //	float freeviewsideang, freeviewupang;	// global spectators viewing angles
@@ -161,10 +165,16 @@ class user_interface {
     // create ui matching to player type (requested from game)
     static user_interface *create(game &gm);
 
-    const sky &get_sky() const { return *(mysky.get()); }
-    const caustics &get_caustics() const { return mycaustics; }
+    const sky &get_sky() const;
+    const caustics &get_caustics() const;
     const water &get_water() const;
-    const coastmap &get_coastmap() const { return mycoastmap; }
+    const coastmap &get_coastmap() const;
+    
+    // Getters for injected dependencies
+    class cfg& get_config() { return config; }
+    const class cfg& get_config() const { return config; }
+    class music& get_audio() { return audio; }
+    const class music& get_audio() const { return audio; }
 
     // helper functions
 
@@ -206,9 +216,7 @@ class user_interface {
     bool abort_requested() const { return abort_request; }
     void request_abort(bool abrt = true) { abort_request = abrt; }
 
-    void switch_geo_wire() {
-        mygeoclipmap->wireframe = !mygeoclipmap->wireframe;
-    }
+    void switch_geo_wire();
 };
 
 #endif
