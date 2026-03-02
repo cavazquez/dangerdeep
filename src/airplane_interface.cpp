@@ -217,7 +217,7 @@ void airplane_interface::display_cockpit(game &gm) {
             // specific keyboard processing
             /*
                                     switch ( key ) {
-                                            case SDLK_y:
+                                            case SDLK_Y:
                                                     if ( zoom_scope )
                                                             zoom_scope = false;
                                                     else

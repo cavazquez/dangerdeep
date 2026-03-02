@@ -101,10 +101,10 @@ int mymain(list<string> &args) {
                 case SDLK_ESCAPE:
                     doquit = true;
                     break;
-                case SDLK_a:
+                case SDLK_A:
                     tria_or_b = 0;
                     break;
-                case SDLK_b:
+                case SDLK_B:
                     tria_or_b = 3;
                     break;
                 case SDLK_1:
@@ -116,13 +116,13 @@ int mymain(list<string> &args) {
                 case SDLK_3:
                     vn = 2;
                     break;
-                case SDLK_x:
+                case SDLK_X:
                     moveaxis = 0;
                     break;
-                case SDLK_y:
+                case SDLK_Y:
                     moveaxis = 1;
                     break;
-                case SDLK_z:
+                case SDLK_Z:
                     moveaxis = 2;
                     break;
                 default:

@@ -1034,13 +1034,13 @@ void map_display::process_input(class game &gm, const SDL_Event &event) {
             if (mapzoom > 1.0 / 16384)
                 mapzoom /= 2;
         }
-        if (event.key.key == SDLK_m) {
+        if (event.key.key == SDLK_M) {
             mapmode++;
             if (mapmode > 1)
                 mapmode = 0;
         }
 #ifdef CVEDIT
-        if (event.key.key == SDLK_w) {
+        if (event.key.key == SDLK_W) {
             cout << "Current cv route:\n\n";
             for (unsigned i = 0; i < cvroute.size(); ++i) {
                 cout << "\t<waypoint x=\"" << cvroute[i].x << "\" y=\"" << cvroute[i].y

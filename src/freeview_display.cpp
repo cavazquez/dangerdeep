@@ -175,7 +175,7 @@ void freeview_display::process_input(class game &gm, const SDL_Event &event) {
         case SDLK_KP_5:
             std::cout << gm.get_player()->get_pos() << std::endl;
             break;
-        case SDLK_w:
+        case SDLK_W:
             ui.switch_geo_wire();
             break;
         default:

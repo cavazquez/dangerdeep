@@ -255,7 +255,7 @@ void submarine_interface::process_input(const SDL_Event &event) {
         const cfg &mycfg = cfg::instance();
 
         // SCREENS
-        if (event.key.key == SDLK_b)
+        if (event.key.key == SDLK_B)
             goto_valves();
         if (mycfg.getkey(KEY_SHOW_GAUGES_SCREEN).equal(event.key)) {
             goto_gauges();
@@ -509,7 +509,7 @@ void submarine_interface::process_input(const SDL_Event &event) {
                 toggle_pause();
                 break;
 #if 1 // fixme test hack
-            case SDLK_r:
+            case SDLK_R:
                 mygame->spawn_particle(std::make_unique<fireworks_particle>(mygame->get_player()->get_pos() + vector3(0, 0, 5)));
                 break;
 #endif

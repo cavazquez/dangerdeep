@@ -47,7 +47,7 @@ class texture;
 // make a special flag: widget* wait_for?
 // process_input(){if (wait_for)wait_for->process_input();else ...old...;} ?
 // ein widget.close fehlt. close:= parent.remove(this), wenn parent==0 dann globale liste nach this
-// durchsuchen. run() lùuft dann bis globale liste leer ist.
+// durchsuchen. run() l?uft dann bis globale liste leer ist.
 
 // more widgets: progress bar
 
@@ -110,10 +110,24 @@ class widget {
               color tc, color tsc, color tdc);
     };
 
+    // Key information structure (SDL3 compatible)
+    struct key_info {
+        SDL_Keycode key;
+        SDL_Scancode scancode;
+        SDL_Keymod mod;
+        
+        key_info(SDL_Keycode k = SDLK_UNKNOWN, SDL_Scancode sc = SDL_SCANCODE_UNKNOWN, SDL_Keymod m = SDL_KMOD_NONE)
+            : key(k), scancode(sc), mod(m) {}
+        
+        // Constructor from SDL_KeyboardEvent
+        key_info(const SDL_KeyboardEvent& ke)
+            : key(ke.key), scancode(ke.scancode), mod(ke.mod) {}
+    };
+
     struct key_event {
         const widget *source;
-        const SDL_Keysym ks;
-        key_event(const widget *_source, const SDL_Keysym &_ks)
+        const key_info ks;
+        key_event(const widget *_source, const key_info &_ks)
             : source(_source), ks(_ks) {}
     };
     struct mouse_click_event {
@@ -157,7 +171,7 @@ class widget {
 
     std::list<const action_listener *> action_listeners;
 
-    void fire_key_event(const SDL_Keysym &ks);
+    void fire_key_event(const key_info &ks);
     void fire_mouse_click_event(int mx, int my, int mb);
     void fire_mouse_release_event();
     void fire_mouse_drag_event(int mx, int my, int rx, int ry, int mb);
@@ -221,7 +235,7 @@ class widget {
     virtual void redraw();
 
     // called for every key in queue
-    virtual void on_char(const SDL_Keysym &ks);
+    virtual void on_char(const key_info &ks);
     // called on mouse button down (mb is one of SDL_BUTTON_LMASK, ...RMASK, ...MMASK)
     virtual void on_click(int mx, int my, int mb) {}
     virtual void on_click(const vector2i &m, int mb) { return on_click(m.x, m.y, mb); }

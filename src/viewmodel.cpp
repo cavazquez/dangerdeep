@@ -535,10 +535,10 @@ void view_model(const string &modelfilename, const string &datafilename) {
                 case SDLK_KP3:
                     pos.z += 1.0;
                     break;
-                case SDLK_l:
+                case SDLK_L:
                     lightmove = !lightmove;
                     break;
-                case SDLK_s: {
+                case SDLK_S: {
                     // Allow user to save smoke position
                     if (smoke && (SDL_GetModState() & (SDL_KMOD_LCTRL | SDL_KMOD_RCTRL))) {
                         try {
@@ -563,13 +563,13 @@ void view_model(const string &modelfilename, const string &datafilename) {
                         mdl->add_mesh(parts.second);
                     }
                 } break;
-                case SDLK_c:
+                case SDLK_C:
                     coordinatesystem = !coordinatesystem;
                     break;
-                case SDLK_p:
+                case SDLK_P:
                     smoke_display = !smoke_display;
                     break;
-                case SDLK_w:
+                case SDLK_W:
                     if (++wireframe > 1)
                         wireframe = 0;
                     break;
@@ -595,21 +595,21 @@ void view_model(const string &modelfilename, const string &datafilename) {
                 float delta = (SDL_GetModState() & (SDL_KMOD_LSHIFT | SDL_KMOD_RSHIFT)) ? 1.000 : 0.100;
 
                 if (event.button.button == SDL_BUTTON_WHEELUP) {
-                    if (keys[SDLK_x]) {
+                    if (keys[SDLK_X]) {
                         smoke_pos.x += delta;
-                    } else if (keys[SDLK_y]) {
+                    } else if (keys[SDLK_Y]) {
                         smoke_pos.y += delta;
-                    } else if (keys[SDLK_z]) {
+                    } else if (keys[SDLK_Z]) {
                         smoke_pos.z += delta;
                     } else {
                         pos.z -= 2;
                     }
                 } else if (event.button.button == SDL_BUTTON_WHEELDOWN) {
-                    if (keys[SDLK_x]) {
+                    if (keys[SDLK_X]) {
                         smoke_pos.x -= delta;
-                    } else if (keys[SDLK_y]) {
+                    } else if (keys[SDLK_Y]) {
                         smoke_pos.y -= delta;
-                    } else if (keys[SDLK_z]) {
+                    } else if (keys[SDLK_Z]) {
                         smoke_pos.z -= delta;
                     } else {
                         pos.z += 2;

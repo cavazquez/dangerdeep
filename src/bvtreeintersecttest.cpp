@@ -120,30 +120,30 @@ int mymain(list<string> &args) {
                 case SDLK_ESCAPE:
                     doquit = true;
                     break;
-                case SDLK_a:
+                case SDLK_A:
                     curr_model = modelA.get();
                     curr_transform = &transformA;
                     break;
-                case SDLK_b:
+                case SDLK_B:
                     curr_model = modelB.get();
                     curr_transform = &transformB;
                     break;
-                case SDLK_m:
+                case SDLK_M:
                     move_not_rotate = true;
                     break;
-                case SDLK_r:
+                case SDLK_R:
                     move_not_rotate = false;
                     break;
-                case SDLK_x:
+                case SDLK_X:
                     axis = 0;
                     break;
-                case SDLK_y:
+                case SDLK_Y:
                     axis = 1;
                     break;
-                case SDLK_z:
+                case SDLK_Z:
                     axis = 2;
                     break;
-                case SDLK_s:
+                case SDLK_S:
                     render_spheres = !render_spheres;
                     break;
                 case SDLK_1:
@@ -156,7 +156,7 @@ int mymain(list<string> &args) {
                 case SDLK_3:
                     splevel = 0;
                     break;
-                case SDLK_t:
+                case SDLK_T:
                     check_tri_tri = !check_tri_tri;
                     intersects_tri = false;
                     break;

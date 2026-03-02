@@ -138,7 +138,7 @@ bool ship_interface::keyboard_common(int keycode, class game &gm) {
         break;
 
     // weapons, fixme
-    case SDLK_t: {
+    case SDLK_T: {
 #if 0
 			bool bow = true;
 			if (target != 0) {
@@ -163,7 +163,7 @@ bool ship_interface::keyboard_common(int keycode, class game &gm) {
     case SDLK_ESCAPE:
         gm.stop();
         break;
-    case SDLK_i:
+    case SDLK_I:
         sys().screenshot();
         sys().add_console("screenshot taken.");
         break;

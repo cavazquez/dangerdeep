@@ -233,7 +233,7 @@ void widget::fire_mouse_click_event(int mx, int my, int mb) {
     }
 }
 
-void widget::fire_key_event(const SDL_Keysym &ks) {
+void widget::fire_key_event(const key_info &ks) {
     key_event event(this, ks);
     for (std::list<const action_listener *>::const_iterator it = action_listeners.begin(); it != action_listeners.end(); it++) {
         (*it)->key_pressed(event);
@@ -551,7 +551,7 @@ void widget::redraw() {
         parent->redraw();
 }
 
-void widget::on_char(const SDL_Keysym &ks) {
+void widget::on_char(const key_info &ks) {
     // we can't handle it, so pass it to the parent
     if (parent)
         parent->on_char(ks);
@@ -583,7 +583,7 @@ void widget::process_input(const SDL_Event &event) {
     switch (event.type) {
     case SDL_EVENT_KEY_DOWN:
         if (focussed && focussed->is_enabled())
-            focussed->on_char(event.key);
+            focussed->on_char(key_info(event.key));
         break;
 
     case SDL_EVENT_KEY_UP: // ignore for now
@@ -1348,8 +1348,8 @@ unsigned widget_edit::cursor_right() const {
     return font::character_right(text, cursorpos);
 }
 
-void widget_edit::on_char(const SDL_Keysym &ks) {
-    int c = ks.sym;
+void widget_edit::on_char(const key_info &ks) {
+    int c = ks.key;
     unsigned l = text.length();
     unsigned textw = globaltheme->myfont->get_size(text).x;
     // 	printf("get char? %i unicode %i\n", c, ks.unicode);
@@ -1604,9 +1604,9 @@ void widget_slider::draw() const {
     draw_line(pos.x + sliderw / 2 + offset, pos.y + h0 + barh / 2, pos.x + sliderw / 2 + offset, pos.y + h0 + h1 - barh * 3 / 2);
 }
 
-void widget_slider::on_char(const SDL_Keysym &ks) {
+void widget_slider::on_char(const key_info &ks) {
     // move with cursor
-    int c = ks.sym;
+    int c = ks.key;
     if (c == SDLK_LEFT && currvalue > minvalue) {
         --currvalue;
         on_change();
